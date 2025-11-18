@@ -1,112 +1,141 @@
-import React, { useState, useEffect } from 'react';
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Widget Relógio Minimalista</title>
+    
+    <!-- Carregando React e Tailwind via CDN para funcionar em arquivo único -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* Garante que o fundo seja branco e o conteúdo centralizado */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #FFFFFF;
+            overflow: hidden; /* Evita barras de rolagem no embed */
+        }
+    </style>
+</head>
+<body>
 
-const App = () => {
-  const [date, setDate] = useState(new Date());
+    <div id="root"></div>
 
-  // Atualiza o relógio a cada segundo
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setDate(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-  // Configuração de cores (Verde Pastel Escuro)
-  const accentColor = "#5F8D65"; // Um verde sálvia escuro/pastel
-  const bgColor = "#FFFFFF";
+        const App = () => {
+            const [date, setDate] = useState(new Date());
 
-  // Helpers para o calendário
-  const daysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
-  const firstDayOfMonth = (year, month) => new Date(year, month, 1).getDay();
+            // Atualiza o relógio a cada segundo
+            useEffect(() => {
+                const timer = setInterval(() => {
+                    setDate(new Date());
+                }, 1000);
+                return () => clearInterval(timer);
+            }, []);
 
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  const currentDay = date.getDate();
+            // Configuração de cores (Verde Pastel Escuro)
+            const accentColor = "#5F8D65"; 
+            
+            // Helpers para o calendário
+            const daysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
+            const firstDayOfMonth = (year, month) => new Date(year, month, 1).getDay();
 
-  const totalDays = daysInMonth(year, month);
-  const startDay = firstDayOfMonth(year, month);
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const currentDay = date.getDate();
 
-  const renderCalendar = () => {
-    const blanks = Array(startDay).fill(null);
-    const days = Array.from({ length: totalDays }, (_, i) => i + 1);
-    const allCells = [...blanks, ...days];
+            const totalDays = daysInMonth(year, month);
+            const startDay = firstDayOfMonth(year, month);
 
-    return (
-      <div className="grid grid-cols-7 gap-1 text-center text-xs mt-2 w-full max-w-[240px]">
-        {/* Cabeçalho dos dias da semana */}
-        {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((dayLetter, index) => (
-          <div 
-            key={`header-${index}`} // Chave única usando prefixo e índice para evitar duplicatas
-            className="font-semibold text-gray-400 py-1"
-          >
-            {dayLetter}
-          </div>
-        ))}
-        
-        {/* Dias do mês */}
-        {allCells.map((dayNumber, index) => {
-          const isToday = dayNumber === currentDay;
-          const cellKey = `cell-${index}`; // Chave única para cada célula do calendário
-          
-          return (
-            <div
-              key={cellKey}
-              className={`
-                h-8 w-8 flex items-center justify-center rounded-full transition-all
-                ${!dayNumber ? 'invisible' : ''}
-                ${isToday ? 'text-white font-bold shadow-md' : 'text-gray-600 hover:bg-gray-100'}
-              `}
-              style={isToday ? { backgroundColor: accentColor } : {}}
-            >
-              {dayNumber}
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
+            const renderCalendar = () => {
+                const blanks = Array(startDay).fill(null);
+                const days = Array.from({ length: totalDays }, (_, i) => i + 1);
+                const allCells = [...blanks, ...days];
 
-  return (
-    <div 
-      className="min-h-screen flex items-center justify-center font-sans"
-      style={{ backgroundColor: bgColor }}
-    >
-      <div className="flex flex-col items-center p-6 rounded-2xl max-w-sm w-full">
-        
-        {/* Cabeçalho: Relógio */}
-        <div className="flex flex-col items-center mb-6">
-          <h1 
-            className="text-6xl font-light tracking-tight tabular-nums"
-            style={{ color: accentColor }}
-          >
-            {date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-          </h1>
-          <p className="text-gray-400 text-sm mt-1 font-medium tracking-widest uppercase">
-            {date.toLocaleTimeString('pt-BR', { second: '2-digit' })} s
-          </p>
-        </div>
+                return (
+                    <div className="grid grid-cols-7 gap-1 text-center text-xs mt-2 w-full max-w-[240px]">
+                        {/* Cabeçalho dos dias da semana */}
+                        {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((dayLetter, index) => (
+                            <div 
+                                key={`header-${index}`} 
+                                className="font-semibold text-gray-400 py-1"
+                            >
+                                {dayLetter}
+                            </div>
+                        ))}
+                        
+                        {/* Dias do mês */}
+                        {allCells.map((dayNumber, index) => {
+                            const isToday = dayNumber === currentDay;
+                            const cellKey = `cell-${index}`;
+                            
+                            return (
+                                <div
+                                    key={cellKey}
+                                    className={`
+                                        h-8 w-8 flex items-center justify-center rounded-full transition-all cursor-default
+                                        ${!dayNumber ? 'invisible' : ''}
+                                        ${isToday ? 'text-white font-bold shadow-md' : 'text-gray-600 hover:bg-gray-100'}
+                                    `}
+                                    style={isToday ? { backgroundColor: accentColor } : {}}
+                                >
+                                    {dayNumber}
+                                </div>
+                            );
+                        })}
+                    </div>
+                );
+            };
 
-        {/* Data Por Extenso */}
-        <div className="text-center mb-6">
-          <h2 className="text-xl font-medium text-gray-700 capitalize">
-            {date.toLocaleDateString('pt-BR', { weekday: 'long' })}
-          </h2>
-          <p className="text-sm text-gray-500">
-            {date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
-          </p>
-        </div>
+            return (
+                <div className="h-screen flex items-center justify-center font-sans select-none">
+                    <div className="flex flex-col items-center p-6 w-full">
+                        
+                        {/* Relógio */}
+                        <div className="flex flex-col items-center mb-6">
+                            <h1 
+                                className="text-6xl font-light tracking-tight tabular-nums"
+                                style={{ color: accentColor }}
+                            >
+                                {date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                            </h1>
+                            <p className="text-gray-400 text-sm mt-1 font-medium tracking-widest uppercase">
+                                {date.toLocaleTimeString('pt-BR', { second: '2-digit' })} s
+                            </p>
+                        </div>
 
-        {/* Divisor Decorativo */}
-        <div className="w-16 h-1 rounded-full mb-6 opacity-30" style={{ backgroundColor: accentColor }}></div>
+                        {/* Data */}
+                        <div className="text-center mb-6">
+                            <h2 className="text-xl font-medium text-gray-700 capitalize">
+                                {date.toLocaleDateString('pt-BR', { weekday: 'long' })}
+                            </h2>
+                            <p className="text-sm text-gray-500">
+                                {date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            </p>
+                        </div>
 
-        {/* Calendário */}
-        <div className="bg-white p-4 rounded-xl w-full flex justify-center">
-           {renderCalendar()}
-        </div>
+                        {/* Divisor */}
+                        <div className="w-16 h-1 rounded-full mb-6 opacity-30" style={{ backgroundColor: accentColor }}></div>
 
-      </div>
-    </div>
-  );
-};
+                        {/* Calendário */}
+                        <div className="bg-white p-4 rounded-xl w-full flex justify-center">
+                           {renderCalendar()}
+                        </div>
 
-export default App;
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
